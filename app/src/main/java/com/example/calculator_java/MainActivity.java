@@ -29,8 +29,74 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         calculator = new Calculator();
+        initializeUiComponents();
+        myApp = (MyApp) getApplication();
+        fetchActivityState();
+    }
 
-        // Initialize UI components
+    private void fetchActivityState(){
+        if (myApp.isAdvancedMode() == true) {
+            calculator.setAdvancedMode(myApp.isAdvancedMode());
+            calculator.setHistory(myApp.getHistory());
+            historyTextView.setText(calculator.getHistory());
+            updateHistoryVisibility();
+        }
+    }
+    private void onDigitClick(Button button) {
+        String digit = button.getText().toString();
+        calculator.push(digit);
+        updateResultText(calculator.getInputList());
+    }
+    private void onOperatorClick(Button button) {
+        String operator = button.getText().toString();
+        calculator.push(operator);
+        updateResultText(calculator.getInputList());
+    }
+    private void onClearClick() {
+        calculator.clearInputs();
+        resultTextView.setText("");
+    }
+    private void onEqualsClick() {
+        int result = calculator.calculate();
+        if (result == 1000){
+            Toast.makeText(this, "Consecutive numbers found.", Toast.LENGTH_SHORT).show();
+        }
+        else if (result == 2000) {
+            Toast.makeText(this, "Consecutive operators found.", Toast.LENGTH_SHORT).show();
+        }
+        else if (result == 3000) {
+            Toast.makeText(this, "Invalid Operation found.", Toast.LENGTH_SHORT).show();
+        }
+        else  {
+            resultTextView.setText(Integer.toString(result));
+            if (calculator.isAdvancedMode()) {
+                historyTextView.setText(calculator.getHistory());
+                myApp.setHistory(calculator.getHistory());
+            }
+        }
+    }
+    private void onHistoryClick() {
+        calculator.toggleAdvancedMode();
+        updateHistoryVisibility();
+        myApp.setAdvancedMode(calculator.isAdvancedMode());
+    }
+    private void updateHistoryVisibility() {
+        if (calculator.isAdvancedMode()) {
+            historyButton.setText("STANDARD – NO HISTORY");
+        } else {
+            historyButton.setText("ADVANCE - WITH HISTORY");
+            historyTextView.setText("");
+            calculator.clearOperatorHistory();
+        }
+    }
+    private void updateResultText(List<String> inputList) {
+        StringBuilder resultText = new StringBuilder();
+        for (String item : inputList) {
+            resultText.append(item);
+        }
+        resultTextView.setText(resultText.toString());
+    }
+    private void initializeUiComponents() {
         resultTextView = findViewById(R.id.resultTextView);
         historyTextView = findViewById(R.id.historyTextView);
         historyButton = findViewById(R.id.buttonHistory);
@@ -92,69 +158,8 @@ public class MainActivity extends AppCompatActivity{
                 onHistoryClick();
             }
         });
+    }
 
-        myApp = (MyApp) getApplication();
-        if (myApp.isAdvancedMode() == true) {
-            calculator.setAdvancedMode(myApp.isAdvancedMode());
-            calculator.setHistory(myApp.getHistory());
-            historyTextView.setText(calculator.getHistory());
-            updateHistoryVisibility();
-        }
-    }
-    public void onDigitClick(Button button) {
-        String digit = button.getText().toString();
-        calculator.push(digit);
-        updateResultText(calculator.getInputList());
-    }
-    public void onOperatorClick(Button button) {
-        String operator = button.getText().toString();
-        calculator.push(operator);
-        updateResultText(calculator.getInputList());
-    }
-    public void onClearClick() {
-        calculator.clearInputs();
-        resultTextView.setText("");
-    }
-    public void onEqualsClick() {
-        int result = calculator.calculate();
-        if (result == 1000){
-            Toast.makeText(this, "Consecutive numbers found.", Toast.LENGTH_SHORT).show();
-        }
-        else if (result == 2000) {
-            Toast.makeText(this, "Consecutive operators found.", Toast.LENGTH_SHORT).show();
-        }
-        else if (result == 3000) {
-            Toast.makeText(this, "Invalid Operation found.", Toast.LENGTH_SHORT).show();
-        }
-        else  {
-            resultTextView.setText(Integer.toString(result));
-            if (calculator.isAdvancedMode()) {
-                historyTextView.setText(calculator.getHistory());
-                myApp.setHistory(calculator.getHistory());
-            }
-        }
-    }
-    public void onHistoryClick() {
-        calculator.toggleAdvancedMode();
-        updateHistoryVisibility();
-        myApp.setAdvancedMode(calculator.isAdvancedMode());
-    }
-    private void updateHistoryVisibility() {
-        if (calculator.isAdvancedMode()) {
-            historyButton.setText("STANDARD – NO HISTORY");
-        } else {
-            historyButton.setText("ADVANCE - WITH HISTORY");
-            historyTextView.setText("");
-            calculator.clearOperatorHistory();
-        }
-    }
-    private void updateResultText(List<String> inputList) {
-        StringBuilder resultText = new StringBuilder();
-        for (String item : inputList) {
-            resultText.append(item);
-        }
-        resultTextView.setText(resultText.toString());
-    }
 }
 
 

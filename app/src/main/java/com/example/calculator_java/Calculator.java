@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Calculator {
 
-    private List<String> inputList;
+    final private List<String> inputList;
     private boolean isAdvancedMode;
     private StringBuilder history;
 
@@ -85,18 +85,5 @@ public class Calculator {
     public void clearOperatorHistory() {
         history = new StringBuilder();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
